@@ -1,10 +1,15 @@
 // src/components/layout.js
 import { APP_CONFIG } from '../../config/config.js';
+import { applyDynamicTheme } from '../utils/themeManager.js';
 
 export function renderLayout(activeModule = 'pos', onNavigateCallback) {
+  // Aplicar tema dinámico al cargar el layout principal
+  applyDynamicTheme();
+
   const root = document.getElementById('layout-root');
   const session = JSON.parse(localStorage.getItem('moto_crm_session') || '{}');
   const currentCompanyName = localStorage.getItem('moto_crm_company_name') || APP_CONFIG.empresa.nombre;
+  const customLogo = localStorage.getItem('moto_crm_custom_logo') || '';
 
   const navItems = [
     { 
@@ -58,13 +63,21 @@ export function renderLayout(activeModule = 'pos', onNavigateCallback) {
     `;
   }).join('');
 
+  // Renderizado dinámico del logo en el Sidebar (imagen personalizada o SVG corporativo)
+  const logoAsideHtml = customLogo 
+    ? `<div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[var(--border-color)] shadow-md"><img src="${customLogo}" class="w-full h-full object-cover" /></div>`
+    : `<div class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] shadow-md p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+          <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="currentColor" fill-opacity="0.2"/>
+          <circle cx="12" cy="12" r="3" fill="var(--bg-surface)" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>`;
+
   root.innerHTML = `
     <!-- SIDEBAR COMPONENT (PC) -->
     <aside class="hidden md:flex flex-col w-64 h-full bg-[var(--bg-surface)] border-r border-[var(--border-color)] shadow-xl z-20">
       <div class="p-6 border-b border-[var(--border-color)] flex items-center gap-3">
-        <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--color-brand)] text-white shadow-md">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" /></svg>
-        </div>
+        ${logoAsideHtml}
         <h2 class="text-xl font-extrabold text-[var(--color-brand)] truncate">${currentCompanyName}</h2>
       </div>
 

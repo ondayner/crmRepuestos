@@ -7,7 +7,8 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230284c7'%3E%3Cpath d='M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8 8 0 0 1 18.93 8zM12 4.07c.83 1.2 1.48 2.53 1.91 3.93h-3.82c.43-1.4.08-2.73 1.91-3.93zM4.26 14a7.82 7.82 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4zm.81 2h2.95a15.65 15.65 0 0 0 1.38 3.56A8 8 0 0 1 5.07 16zm2.95-8H5.07a8 8 0 0 1 2.53-3.56A15.65 15.65 0 0 0 8.02 8zM12 19.93c-.83-1.2-1.48-2.53-1.91-3.93h3.82c-.43 1.4-.08 2.73-1.91 3.93zM14.34 14H9.66a14.5 14.5 0 0 1 0-4h4.68zm1.64 5.56a15.65 15.65 0 0 0 1.38-3.56h2.95a8 8 0 0 1-2.53 3.56zM16.36 14a16.5 16.5 0 0 0 0-4h3.38a7.82 7.82 0 0 1 0 4z'/%3E%3C/svg%3E">
+  <!-- Nuevo Favicon de la App -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='%230284c7' fill-opacity='0.25'/%3E%3Ccircle cx='12' cy='12' r='3' stroke='%230284c7' stroke-width='2' fill='%230f172a'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/css/globals.css">
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 font-sans transition-colors duration-300">
@@ -15,11 +16,11 @@
   <main class="w-full max-w-md p-8 sm:p-10 rounded-[2rem] shadow-2xl backdrop-blur-xl border border-[var(--border-color)] bg-[var(--bg-surface)] transition-all duration-300">
 
     <div class="text-center mb-10">
-      <!-- LOGO DE LA EMPRESA (Sustituido con la imagen corporativa / SVG principal) -->
-      <div class="mx-auto w-20 h-20 mb-4 flex items-center justify-center rounded-2xl bg-[var(--color-brand)] text-white shadow-lg shadow-[var(--color-brand)]/30 overflow-hidden p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full fill-current">
-          <circle cx="256" cy="256" r="160" fill="none" stroke="currentColor" stroke-width="40"/>
-          <path d="M256 96v64m0 192v64M96 256h64m192 0h64" stroke="currentColor" stroke-width="40" stroke-linecap="round"/>
+      <!-- LOGOTIPO CORPORATIVO ESTILIZADO -->
+      <div class="mx-auto w-20 h-20 mb-4 flex items-center justify-center rounded-2xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] shadow-lg shadow-[var(--color-brand)]/20 overflow-hidden p-3.5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+          <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="currentColor" fill-opacity="0.2"/>
+          <circle cx="12" cy="12" r="3" fill="var(--bg-surface)" stroke="currentColor" stroke-width="2"/>
         </svg>
       </div>
       <h1 id="appHeading" class="text-3xl font-extrabold tracking-tight mb-2">Moto CRM</h1>
@@ -67,28 +68,16 @@
       <!-- ALERTA GLOBAL -->
       <div id="loginAlert" class="hidden"></div>
 
-      <!-- BOTONES DE ACCESO (Botón principal + Botón de huella condicional al lado) -->
-      <div class="flex items-center gap-2 pt-2">
+      <!-- BOTÓN DE ACCESO COMPLETO -->
+      <div class="pt-2">
         <button 
           type="submit" 
           id="submitBtn" 
           disabled 
-          class="flex-1 py-3.5 px-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white font-bold rounded-xl transition-all duration-300 transform active:scale-[0.98] flex justify-center items-center gap-2 shadow-lg shadow-[var(--color-brand)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          class="w-full py-3.5 px-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white font-bold rounded-xl transition-all duration-300 transform active:scale-[0.98] flex justify-center items-center gap-2 shadow-lg shadow-[var(--color-brand)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           <span>Entrar</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </button>
-
-        <!-- Botón Huella (Oculto por defecto, aparece solo en la app nativa) -->
-        <button 
-          type="button" 
-          id="btnBiometric" 
-          title="Iniciar sesión con huella dactilar"
-          class="hidden py-3.5 px-4 bg-[var(--bg-surface)] border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 font-bold rounded-xl transition-all duration-300 flex items-center justify-center shadow-md active:scale-[0.98]"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.567-2.8 9m-2.8-9a6.002 6.002 0 00-.8 3m11.2-3a6.002 6.002 0 01.8 3m-9.6-9.157a4.002 4.002 0 017.6 0M15 17a4 4 0 00-8 0m8 0h1a2 2 0 002-2v-3a2 2 0 00-2-2h-1m-8 7H6a2 2 0 01-2-2v-3a2 2 0 012-2h1" />
-          </svg>
         </button>
       </div>
 
