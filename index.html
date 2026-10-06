@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title id="appTitle">Login - Cargando...</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230284c7'%3E%3Cpath d='M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8 8 0 0 1 18.93 8zM12 4.07c.83 1.2 1.48 2.53 1.91 3.93h-3.82c.43-1.4.08-2.73 1.91-3.93zM4.26 14a7.82 7.82 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4zm.81 2h2.95a15.65 15.65 0 0 0 1.38 3.56A8 8 0 0 1 5.07 16zm2.95-8H5.07a8 8 0 0 1 2.53-3.56A15.65 15.65 0 0 0 8.02 8zM12 19.93c-.83-1.2-1.48-2.53-1.91-3.93h3.82c-.43 1.4-.08 2.73-1.91 3.93zM14.34 14H9.66a14.5 14.5 0 0 1 0-4h4.68zm1.64 5.56a15.65 15.65 0 0 0 1.38-3.56h2.95a8 8 0 0 1-2.53 3.56zM16.36 14a16.5 16.5 0 0 0 0-4h3.38a7.82 7.82 0 0 1 0 4z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/globals.css">
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-8 font-sans transition-colors duration-300">
+
+  <main class="w-full max-w-md p-8 sm:p-10 rounded-[2rem] shadow-2xl backdrop-blur-xl border border-[var(--border-color)] bg-[var(--bg-surface)] transition-all duration-300">
+
+    <div class="text-center mb-10">
+      <!-- LOGO DE LA EMPRESA (Sustituido con la imagen corporativa / SVG principal) -->
+      <div class="mx-auto w-20 h-20 mb-4 flex items-center justify-center rounded-2xl bg-[var(--color-brand)] text-white shadow-lg shadow-[var(--color-brand)]/30 overflow-hidden p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full fill-current">
+          <circle cx="256" cy="256" r="160" fill="none" stroke="currentColor" stroke-width="40"/>
+          <path d="M256 96v64m0 192v64M96 256h64m192 0h64" stroke="currentColor" stroke-width="40" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 id="appHeading" class="text-3xl font-extrabold tracking-tight mb-2">Moto CRM</h1>
+      <p class="text-[var(--text-muted)] text-sm sm:text-base">Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <form id="loginForm" class="space-y-5" novalidate>
+
+      <!-- Campo Usuario -->
+      <div class="space-y-1">
+        <label for="username" class="block text-sm font-semibold text-[var(--text-main)] ml-1">Usuario</label>
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--text-muted)] group-focus-within:text-[var(--color-brand)] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          </div>
+          <input type="text" id="username" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[var(--border-color)] bg-transparent text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] transition-all duration-200" placeholder="Ej: ondayner" autocomplete="username">
+        </div>
+        <span id="usernameError" class="text-xs text-red-500 font-medium ml-1 hidden">Este campo es obligatorio</span>
+      </div>
+
+      <!-- Campo PIN -->
+      <div class="space-y-1">
+        <label for="pin" class="block text-sm font-semibold text-[var(--text-main)] ml-1">PIN de Acceso</label>
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--text-muted)] group-focus-within:text-[var(--color-brand)] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          </div>
+          <input type="password" id="pin" inputmode="numeric" class="w-full pl-11 pr-12 py-3.5 rounded-xl border border-[var(--border-color)] bg-transparent text-[var(--text-main)] placeholder-[var(--text-muted)] tracking-widest focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] transition-all duration-200 font-mono" placeholder="••••">
+          
+          <button type="button" id="togglePinBtn" class="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--color-brand)] transition-colors">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+          </button>
+        </div>
+        <span id="pinError" class="text-xs text-red-500 font-medium ml-1 hidden">Este campo es obligatorio</span>
+      </div>
+
+      <!-- Recordar Usuario -->
+      <div class="flex items-center justify-between pt-1">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-[var(--border-color)] text-[var(--color-brand)] focus:ring-[var(--color-brand)] bg-transparent accent-[var(--color-brand)]">
+          <span class="text-sm font-medium text-[var(--text-main)]">Recordar usuario y PIN</span>
+        </label>
+      </div>
+
+      <!-- ALERTA GLOBAL -->
+      <div id="loginAlert" class="hidden"></div>
+
+      <!-- BOTONES DE ACCESO (Botón principal + Botón de huella condicional al lado) -->
+      <div class="flex items-center gap-2 pt-2">
+        <button 
+          type="submit" 
+          id="submitBtn" 
+          disabled 
+          class="flex-1 py-3.5 px-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white font-bold rounded-xl transition-all duration-300 transform active:scale-[0.98] flex justify-center items-center gap-2 shadow-lg shadow-[var(--color-brand)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        >
+          <span>Entrar</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </button>
+
+        <!-- Botón Huella (Oculto por defecto, aparece solo en la app nativa) -->
+        <button 
+          type="button" 
+          id="btnBiometric" 
+          title="Iniciar sesión con huella dactilar"
+          class="hidden py-3.5 px-4 bg-[var(--bg-surface)] border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 font-bold rounded-xl transition-all duration-300 flex items-center justify-center shadow-md active:scale-[0.98]"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.567-2.8 9m-2.8-9a6.002 6.002 0 00-.8 3m11.2-3a6.002 6.002 0 01.8 3m-9.6-9.157a4.002 4.002 0 017.6 0M15 17a4 4 0 00-8 0m8 0h1a2 2 0 002-2v-3a2 2 0 00-2-2h-1m-8 7H6a2 2 0 01-2-2v-3a2 2 0 012-2h1" />
+          </svg>
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <script type="module" src="./src/pages/login.js"></script>
+</body>
+</html>
