@@ -63,10 +63,20 @@ export function renderLayout(activeModule = 'pos', onNavigateCallback) {
     `;
   }).join('');
 
-  // Renderizado dinámico del logo en el Sidebar (imagen personalizada o SVG corporativo)
+  // Renderizado dinámico del logo en el Sidebar (PC)
   const logoAsideHtml = customLogo 
     ? `<div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[var(--border-color)] shadow-md"><img src="${customLogo}" class="w-full h-full object-cover" /></div>`
     : `<div class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] shadow-md p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+          <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="currentColor" fill-opacity="0.2"/>
+          <circle cx="12" cy="12" r="3" fill="var(--bg-surface)" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>`;
+
+  // Renderizado dinámico del logo en el Header Superior (Móvil)
+  const logoHeaderMobileHtml = customLogo 
+    ? `<div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-[var(--border-color)] shadow-sm"><img src="${customLogo}" class="w-full h-full object-cover" /></div>`
+    : `<div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] shadow-sm p-1.5">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
           <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="currentColor" fill-opacity="0.2"/>
           <circle cx="12" cy="12" r="3" fill="var(--bg-surface)" stroke="currentColor" stroke-width="2"/>
@@ -100,13 +110,16 @@ export function renderLayout(activeModule = 'pos', onNavigateCallback) {
       <!-- ÁREA DE CONTENIDO Y HEADER/FOOTER MÓVIL CORREGIDA -->
       <main class="flex-1 h-full relative flex flex-col overflow-hidden bg-[var(--bg-primary)]">
         <header class="md:hidden flex-none bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-[var(--border-color)] p-4 flex justify-between items-center z-10 pt-safe">
-          <h2 class="text-lg font-extrabold text-[var(--color-brand)] truncate">${currentCompanyName}</h2>
-          <button id="btnLogoutMobile" class="text-[var(--text-muted)] hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-500/10">
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${logoHeaderMobileHtml}
+            <h2 class="text-base font-extrabold text-[var(--color-brand)] truncate">${currentCompanyName}</h2>
+          </div>
+          <button id="btnLogoutMobile" class="text-[var(--text-muted)] hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-500/10 shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
           </button>
         </header>
 
-        <!-- Contenedor con scroll interno y padding inferior holgado (pb-24) para que el navbar nunca tape nada -->
+        <!-- Contenedor con scroll interno y padding inferior holgado para que el navbar nunca tape nada -->
         <div id="app-content" class="flex-1 overflow-y-auto p-4 sm:p-8 pb-28 md:pb-8 w-full max-w-7xl mx-auto"></div>
 
         <!-- Navbar inferior flotante optimizado para móvil y safe-areas de Android -->
