@@ -1,25 +1,47 @@
 // src/services/db.js
 import { supabase } from '../../config/supabase.js';
 
+// Función auxiliar para obtener el ID del usuario actual desde la sesión en localStorage
+function getUsuarioActualId() {
+  try {
+    const session = JSON.parse(localStorage.getItem('moto_crm_session') || '{}');
+    return session.id || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function getProductosService() {
-  const { data, error } = await supabase
+  const usuarioId = getUsuarioActualId();
+  
+  let query = supabase
     .from('productos')
     .select('*')
     .order('created_at', { ascending: false });
 
+  // Si hay un usuario logueado, filtramos por su ID
+  if (usuarioId) {
+    query = query.eq('usuario_id', usuarioId);
+  }
+
+  const { data, error } = await query;
   if (error) throw error;
   return data;
 }
 
 export async function createProductoService(producto) {
+  const usuarioId = getUsuarioActualId();
+
   const { data, error } = await supabase
     .from('productos')
     .insert([{
       nombre: producto.nombre,
+      codigo_barras: producto.codigo_barras || null,
       precio_usd: producto.precio_usd,
       stock: producto.stock,
       descripcion: producto.descripcion || null,
-      imagen_url: producto.imagen_url || null
+      imagen_url: producto.imagen_url || null,
+      usuario_id: usuarioId // <-- Asignando el usuario activo
     }])
     .select();
 
@@ -32,6 +54,7 @@ export async function updateProductoService(id, producto) {
     .from('productos')
     .update({
       nombre: producto.nombre,
+      codigo_barras: producto.codigo_barras || null,
       precio_usd: producto.precio_usd,
       stock: producto.stock,
       descripcion: producto.descripcion || null,
@@ -69,7 +92,9 @@ export async function deleteProductoService(id) {
 // --- SERVICIOS DE PUNTO DE VENTA (POS) Y VENTAS ---
 
 export async function procesarVentaService(ventaData, items) {
-  // 1. Insertar la factura principal con el total calculado (incluyendo IVA)
+  const usuarioId = getUsuarioActualId();
+
+  // 1. Insertar la factura principal incluyendo el usuario_id
   const { data: factura, error: errorFactura } = await supabase
     .from('facturas')
     .insert([{
@@ -78,7 +103,8 @@ export async function procesarVentaService(ventaData, items) {
       total_usd: ventaData.total_usd,
       total_bs: ventaData.total_bs,
       tasa_bcv: ventaData.tasa_bcv,
-      vendedor_id: ventaData.vendedor_id || null
+      vendedor_id: ventaData.vendedor_id || null,
+      usuario_id: usuarioId // <-- Asignando el usuario activo
     }])
     .select()
     .single();
@@ -121,10 +147,18 @@ export async function procesarVentaService(ventaData, items) {
 }
 
 export async function getFacturasService() {
-  const { data, error } = await supabase
+  const usuarioId = getUsuarioActualId();
+
+  let query = supabase
     .from('facturas')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (usuarioId) {
+    query = query.eq('usuario_id', usuarioId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Error obteniendo facturas:', error);
