@@ -74,7 +74,6 @@ function drawInventoryUI(container) {
     <div class="space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[var(--bg-surface)] p-4 sm:p-6 rounded-2xl border border-[var(--border-color)] shadow-sm">
         <div>
-          <h1 class="text-2xl font-black text-[var(--text-main)]">Inventario de Repuestos</h1>
           <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
             Tasa BCV hoy: <strong class="text-[var(--color-brand)] font-mono">${tasaActual.toFixed(2)} Bs/$</strong>
           </p>

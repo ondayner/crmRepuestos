@@ -26,11 +26,6 @@ export function renderSettings(container) {
 
   container.innerHTML = `
     <div class="space-y-6 max-w-4xl mx-auto pb-10">
-      
-      <div class="bg-[var(--bg-surface)] p-5 rounded-2xl border border-[var(--border-color)] shadow-sm">
-        <h1 class="text-xl font-black text-[var(--text-main)]">Configuración del Sistema</h1>
-        <p class="text-xs text-[var(--text-muted)]">Administración fiscal, tasas de cambio, identidad visual y respaldos avanzados</p>
-      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         

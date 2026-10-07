@@ -1,7 +1,7 @@
 // src/pages/pos.js
 import { getProductosService, procesarVentaService } from '../services/db.js';
 import { getTasaBCV, formatBs } from '../services/bcv.js';
-import { showAlert, setupCartDrawerEvents } from '../components/ui.js';
+import { showAlert, setupCartDrawerEvents, initBarcodeScanner } from '../components/ui.js';
 
 let productosCache = [];
 let productosFiltrados = [];
@@ -58,9 +58,16 @@ function drawPOSUI(container) {
             </span>
           </div>
 
-          <div class="relative">
-            <input type="text" id="posSearchInput" placeholder="Buscar por nombre (Ej: Tanque, Cilindro, Aceite)..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-3.5 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          <!-- BUSCADOR Y BOTÓN DE CÁMARA PARA ESCANEAR -->
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <input type="text" id="posSearchInput" placeholder="Busca por nombre, descripción o escanea código..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] text-xs font-medium transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-3 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <button id="btnPosScanCamera" title="Escanear con cámara" class="px-4 py-3 bg-[var(--color-brand)] text-white font-bold rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-md shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span class="hidden sm:inline text-xs">Escanear</span>
+            </button>
           </div>
 
           <div id="posProductsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -79,7 +86,7 @@ function drawPOSUI(container) {
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)] mb-3">
             <h2 class="font-extrabold text-lg text-[var(--text-main)] flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
               Orden de Venta
             </h2>
             <div class="flex items-center gap-2">
@@ -132,7 +139,7 @@ function drawPOSUI(container) {
           <div id="posAlert" class="hidden"></div>
 
           <button id="btnProcessSale" disabled class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             <span>Procesar Venta y Descontar</span>
           </button>
         </div>
@@ -143,7 +150,7 @@ function drawPOSUI(container) {
 
     <div id="mobileCartTrigger" class="lg:hidden fixed bottom-16 left-4 right-4 z-30 bg-[var(--color-brand)] text-white p-3.5 rounded-2xl shadow-2xl flex justify-between items-center cursor-pointer active:scale-95 transition-all">
       <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         <span class="font-bold text-sm" id="mobileCartBadge">Ver Orden (0)</span>
       </div>
       <span class="font-mono font-black text-base" id="mobileCartTotal">$0.00</span>
@@ -260,6 +267,60 @@ function renderCartItems() {
   `).join('');
 }
 
+function agregarProductoAlCarrito(producto) {
+  if (!producto || producto.stock <= 0) {
+    showAlert('El producto no tiene stock disponible.', 'warning', 'posAlert');
+    return;
+  }
+
+  const existing = carrito.find(item => item.id == producto.id);
+  if (existing) {
+    if (existing.cantidad < producto.stock) {
+      existing.cantidad++;
+    } else {
+      showAlert(`Límite alcanzado (${producto.stock} en stock)`, 'warning', 'posAlert');
+      return;
+    }
+  } else {
+    carrito.push({
+      id: producto.id,
+      nombre: producto.nombre,
+      precio_usd: Number(producto.precio_usd),
+      cantidad: 1,
+      stock_actual: producto.stock
+    });
+  }
+  document.getElementById('cartItemsContainer').innerHTML = renderCartItems();
+  updateCartTotals();
+  showAlert(`Agregado: ${producto.nombre}`, 'success', 'posAlert');
+}
+
+function procesarBusquedaOEscaneo(termino) {
+  const term = termino.toLowerCase().trim();
+  if (!term) return;
+
+  // 1. Buscar coincidencia exacta por código de barras o ID
+  const matchExacto = productosCache.find(p => 
+    p.stock > 0 && ((p.codigo_barras && p.codigo_barras.toLowerCase() === term) || p.id == term)
+  );
+
+  if (matchExacto) {
+    agregarProductoAlCarrito(matchExacto);
+    const searchInput = document.getElementById('posSearchInput');
+    if (searchInput) searchInput.value = '';
+    productosFiltrados = productosCache.filter(p => p.stock > 0);
+    currentPagePOS = 1;
+    updatePOSGridAndPagination();
+  } else {
+    // 2. Si no es exacto, filtrar por nombre/descripción en tiempo real
+    productosFiltrados = productosCache.filter(p => 
+      p.stock > 0 && (p.nombre.toLowerCase().includes(term) || (p.descripcion && p.descripcion.toLowerCase().includes(term)))
+    );
+    currentPagePOS = 1;
+    updatePOSGridAndPagination();
+  }
+}
+
 function updateCartTotals() {
   const rateNum = getIvaRate();
   const subtotalUSD = carrito.reduce((sum, item) => sum + (item.precio_usd * item.cantidad), 0);
@@ -304,12 +365,24 @@ function setupPOSEvents(container) {
   }
 
   const searchInput = document.getElementById('posSearchInput');
+  
+  // Soporte para entrada manual y pistolas físicas de códigos de barras (Enter)
   searchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase().trim();
-    productosFiltrados = productosCache.filter(p => p.stock > 0 && p.nombre.toLowerCase().includes(term));
-    currentPagePOS = 1;
-    updatePOSGridAndPagination();
+    procesarBusquedaOEscaneo(e.target.value);
   });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      procesarBusquedaOEscaneo(searchInput.value);
+    }
+  });
+
+  // Botón para activar el escáner de cámara
+  document.getElementById('btnPosScanCamera').onclick = () => {
+    initBarcodeScanner((scannedCode) => {
+      procesarBusquedaOEscaneo(scannedCode);
+    });
+  };
 
   setupPOSPaginationEvents();
 
@@ -318,27 +391,7 @@ function setupPOSEvents(container) {
     if (addBtn) {
       const id = addBtn.getAttribute('data-add-to-cart');
       const producto = productosCache.find(p => p.id == id);
-
-      if (producto) {
-        const existing = carrito.find(item => item.id == id);
-        if (existing) {
-          if (existing.cantidad < producto.stock) {
-            existing.cantidad++;
-          } else {
-            showAlert(`Límite alcanzado (${producto.stock} en stock)`, 'warning', 'posAlert');
-          }
-        } else {
-          carrito.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            precio_usd: Number(producto.precio_usd),
-            cantidad: 1,
-            stock_actual: producto.stock
-          });
-        }
-        document.getElementById('cartItemsContainer').innerHTML = renderCartItems();
-        updateCartTotals();
-      }
+      if (producto) agregarProductoAlCarrito(producto);
     }
 
     const plusBtn = e.target.closest('[data-cart-plus]');
