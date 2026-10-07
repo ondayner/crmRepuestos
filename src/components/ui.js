@@ -169,9 +169,17 @@ function startScanner(onScanSuccess, modalEl) {
   const html5QrCode = new Html5Qrcode("reader");
   window.activeScanner = html5QrCode;
 
+  // Configuración optimizada para velocidad en Android y Web
+  const config = {
+    fps: 20, // Mayor tasa de cuadros por segundo para lectura inmediata
+    qrbox: { width: 280, height: 140 }, // Área rectangular perfecta para códigos de barras
+    aspectRatio: 1.0
+  };
+
+  // Forzar cámara trasera con resolución moderada para evitar que se congele
   html5QrCode.start(
     { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 250, height: 150 } },
+    config,
     (decodedText) => {
       html5QrCode.stop().then(() => {
         window.activeScanner = null;
@@ -179,10 +187,26 @@ function startScanner(onScanSuccess, modalEl) {
         onScanSuccess(decodedText);
       }).catch(err => console.error(err));
     },
-    (errorMessage) => {}
+    (errorMessage) => {
+      // Ignorar errores continuos de fotogramas sin códigos detectados
+    }
   ).catch(err => {
-    alert("No se pudo iniciar la cámara. Verifica los permisos de tu dispositivo.");
-    modalEl.remove();
+    // Intento de respaldo con la cámara por defecto si "environment" falla
+    html5QrCode.start(
+      { facingMode: "user" },
+      config,
+      (decodedText) => {
+        html5QrCode.stop().then(() => {
+          window.activeScanner = null;
+          modalEl.remove();
+          onScanSuccess(decodedText);
+        }).catch(err => console.error(err));
+      },
+      () => {}
+    ).catch(fallbackErr => {
+      alert("No se pudo iniciar la cámara. Verifica los permisos de tu dispositivo.");
+      modalEl.remove();
+    });
   });
 }
 
