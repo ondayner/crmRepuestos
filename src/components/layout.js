@@ -140,6 +140,7 @@ export function renderLayout(activeModule = 'pos', onNavigateCallback) {
 
   const handleLogout = () => {
     localStorage.removeItem('moto_crm_session');
+    localStorage.removeItem('moto_crm_persist_session'); // Limpiamos la persistencia al cerrar sesión manualmente
     window.location.replace('index.html');
   };
 

@@ -16,8 +16,6 @@
   <main class="w-full max-w-md p-8 sm:p-10 rounded-[2rem] shadow-2xl backdrop-blur-xl border border-[var(--border-color)] bg-[var(--bg-surface)] transition-all duration-300">
 
     <div class="text-center mb-10">
-      <!-- LOGOTIPO CORPORATIVO ESTILIZADO -->
-    <div class="text-center mb-10">
       <!-- LOGOTIPO DINÁMICO DE LOGIN -->
       <div id="loginLogoContainer" class="mx-auto w-20 h-20 mb-4 flex items-center justify-center rounded-2xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] shadow-lg shadow-[var(--color-brand)]/20 overflow-hidden p-2">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
@@ -70,8 +68,8 @@
       <!-- ALERTA GLOBAL -->
       <div id="loginAlert" class="hidden"></div>
 
-      <!-- BOTÓN DE ACCESO COMPLETO -->
-      <div class="pt-2">
+      <!-- BOTÓN DE ACCESO Y BOTÓN DE HUELLA DIGITAL -->
+      <div class="pt-2 flex items-center gap-3">
         <button 
           type="submit" 
           id="submitBtn" 
@@ -80,6 +78,18 @@
         >
           <span>Entrar</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </button>
+
+        <!-- Botón de Huella Digital (Biometría Nativa) -->
+        <button 
+          type="button" 
+          id="biometricLoginBtn" 
+          title="Iniciar sesión con huella"
+          class="hidden py-3.5 px-4 bg-[var(--color-brand)]/10 text-[var(--color-brand)] border border-[var(--color-brand)]/30 hover:bg-[var(--color-brand)] hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center shrink-0 shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.645-2.266.99-4.659.99-7.138A8 8 0 100 8c0 .713.094 1.42.277 2.106" />
+          </svg>
         </button>
       </div>
 
