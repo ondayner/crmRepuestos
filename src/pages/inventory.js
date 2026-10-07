@@ -13,6 +13,7 @@ let currentPage = 1;
 const itemsPerPage = 6;
 
 export async function renderInventory(container) {
+  // Mostrar pantalla de carga siempre que se entra al módulo
   container.innerHTML = `
     <div class="flex flex-col items-center justify-center h-64 opacity-60">
       <div class="animate-spin rounded-full h-10 w-10 border-4 border-[var(--color-brand)] border-t-transparent mb-3"></div>
@@ -26,8 +27,10 @@ export async function renderInventory(container) {
     productosFiltrados = [...productosCache];
     currentPage = 1;
     
+    // Dibujar la interfaz completa
     drawInventoryUI(container);
 
+    // Inicializar los controles de modales vinculados a este render
     modalControl = renderAddProductModal({
       onSave: async (productoData, editingId) => {
         if (editingId) {
@@ -35,14 +38,14 @@ export async function renderInventory(container) {
         } else {
           await createProductoService(productoData);
         }
-        await renderInventory(container);
+        await reloadInventoryData(container);
       }
     });
 
     stockModalControl = renderStockModal({
       onSave: async (id, currentStock, qty) => {
         await addStockService(id, currentStock, qty);
-        await renderInventory(container);
+        await reloadInventoryData(container);
       }
     });
 
@@ -50,6 +53,20 @@ export async function renderInventory(container) {
     console.error(error);
     container.innerHTML = `<div class="p-4 text-center text-red-500">Error cargando el inventario. Revisa tu conexión.</div>`;
   }
+}
+
+async function reloadInventoryData(container) {
+  productosCache = await getProductosService();
+  const term = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+  if (term) {
+    productosFiltrados = productosCache.filter(p => 
+      p.nombre.toLowerCase().includes(term) || 
+      (p.descripcion && p.descripcion.toLowerCase().includes(term))
+    );
+  } else {
+    productosFiltrados = [...productosCache];
+  }
+  updateGridAndPagination();
 }
 
 function drawInventoryUI(container) {
@@ -174,8 +191,10 @@ function renderPaginationButtons() {
 }
 
 function updateGridAndPagination() {
-  document.getElementById('productsGrid').innerHTML = renderProductsPage();
-  document.getElementById('paginationControls').innerHTML = renderPaginationButtons();
+  const grid = document.getElementById('productsGrid');
+  const pagination = document.getElementById('paginationControls');
+  if (grid) grid.innerHTML = renderProductsPage();
+  if (pagination) pagination.innerHTML = renderPaginationButtons();
   setupPaginationEvents();
 }
 
@@ -208,19 +227,22 @@ function setupEvents(container) {
     if (modalControl) modalControl.open();
   };
 
-  document.getElementById('searchInput').addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase().trim();
-    productosFiltrados = productosCache.filter(p => 
-      p.nombre.toLowerCase().includes(term) || 
-      (p.descripcion && p.descripcion.toLowerCase().includes(term))
-    );
-    currentPage = 1;
-    updateGridAndPagination();
-  });
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase().trim();
+      productosFiltrados = productosCache.filter(p => 
+        p.nombre.toLowerCase().includes(term) || 
+        (p.descripcion && p.descripcion.toLowerCase().includes(term))
+      );
+      currentPage = 1;
+      updateGridAndPagination();
+    });
+  }
 
   setupPaginationEvents();
 
-  container.addEventListener('click', (e) => {
+  container.onclick = (e) => {
     const menuToggle = e.target.closest('[data-menu-toggle]');
     if (menuToggle) {
       const id = menuToggle.getAttribute('data-menu-toggle');
@@ -231,7 +253,9 @@ function setupEvents(container) {
       dropdown.classList.toggle('hidden');
       return;
     } else {
-      document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
+      if (!e.target.closest('[id^="dropdown-"]')) {
+        document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
+      }
     }
 
     const addStockBtn = e.target.closest('[data-add-stock-id]');
@@ -260,12 +284,12 @@ function setupEvents(container) {
         onConfirm: async () => {
           try {
             await deleteProductoService(id);
-            await renderInventory(container);
+            await reloadInventoryData(container);
           } catch (err) {
             alert('Error eliminando producto');
           }
         }
       });
     }
-  });
+  };
 }

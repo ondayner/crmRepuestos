@@ -51,7 +51,6 @@ function drawPOSUI(container) {
         <div class="space-y-4">
           <div class="bg-[var(--bg-surface)] p-4 sm:p-5 rounded-2xl border border-[var(--border-color)] shadow-sm flex justify-between items-center">
             <div>
-              <h1 class="text-xl font-black text-[var(--text-main)]">Punto de Venta</h1>
               <p class="text-xs text-[var(--text-muted)]">Tasa BCV: <span class="font-mono font-bold text-[var(--color-brand)]">${tasaActual.toFixed(2)} Bs/$</span></p>
             </div>
             <span class="text-xs bg-[var(--color-brand)]/10 text-[var(--color-brand)] font-bold px-3 py-1.5 rounded-full">

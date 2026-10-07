@@ -71,10 +71,7 @@ export function compressImage(file, maxWidth = 600, quality = 0.7) {
 }
 
 /**
- * Modal Personalizado de Confirmación (Reutilizable para ajustes, eliminaciones, etc.)
- */
-/**
- * Modal Personalizado de Confirmación (Soporta objeto de configuración o parámetros directos)
+ * Modal Personalizado de Confirmación
  */
 export function showConfirmModal(arg1, arg2) {
   let title = "¿Estás seguro?";
@@ -122,6 +119,71 @@ export function showConfirmModal(arg1, arg2) {
     modalEl.remove();
     if (onConfirm) await onConfirm();
   };
+}
+
+/**
+ * Escáner de Código de Barras mediante Cámara (CDN Universal)
+ */
+export function initBarcodeScanner(onScanSuccess) {
+  let modalEl = document.getElementById('scannerModal');
+  if (modalEl) modalEl.remove();
+
+  modalEl = document.createElement('div');
+  modalEl.id = 'scannerModal';
+  modalEl.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+  
+  modalEl.innerHTML = `
+    <div class="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl w-full max-w-md p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+        <h3 class="font-extrabold text-sm text-[var(--text-main)]">Escanear Código de Barras</h3>
+        <button id="btnCloseScanner" class="text-[var(--text-muted)] hover:text-red-500 text-xl font-bold">&times;</button>
+      </div>
+      <div id="reader" class="w-full rounded-2xl overflow-hidden border border-[var(--border-color)] bg-black"></div>
+      <p class="text-[10px] text-center text-[var(--text-muted)]">Apunta con la cámara de tu dispositivo al código de barras del repuesto.</p>
+    </div>
+  `;
+
+  document.body.appendChild(modalEl);
+
+  // Asegurar que el script de Html5Qrcode esté disponible de forma global
+  if (typeof Html5Qrcode === 'undefined') {
+    const script = document.createElement('script');
+    script.src = "https://unpkg.com/html5-qrcode";
+    script.onload = () => startScanner(onScanSuccess, modalEl);
+    document.head.appendChild(script);
+  } else {
+    startScanner(onScanSuccess, modalEl);
+  }
+
+  document.getElementById('btnCloseScanner').onclick = () => {
+    if (window.activeScanner) {
+      window.activeScanner.stop().then(() => modalEl.remove()).catch(() => modalEl.remove());
+      window.activeScanner = null;
+    } else {
+      modalEl.remove();
+    }
+  };
+}
+
+function startScanner(onScanSuccess, modalEl) {
+  const html5QrCode = new Html5Qrcode("reader");
+  window.activeScanner = html5QrCode;
+
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: { width: 250, height: 150 } },
+    (decodedText) => {
+      html5QrCode.stop().then(() => {
+        window.activeScanner = null;
+        modalEl.remove();
+        onScanSuccess(decodedText);
+      }).catch(err => console.error(err));
+    },
+    (errorMessage) => {}
+  ).catch(err => {
+    alert("No se pudo iniciar la cámara. Verifica los permisos de tu dispositivo.");
+    modalEl.remove();
+  });
 }
 
 /**
@@ -207,6 +269,16 @@ export function renderAddProductModal({ onSave }) {
           <span id="errNombre" class="text-xs text-red-500 font-medium hidden">El nombre es obligatorio</span>
         </div>
 
+        <div class="space-y-1">
+          <label class="block text-xs font-bold uppercase text-[var(--text-muted)]">Código de Barras (Opcional)</label>
+          <div class="flex gap-2">
+            <input type="text" id="pCodigoBarras" placeholder="Escanea o escribe el código..." class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-transparent text-[var(--text-main)] font-mono focus:outline-none transition-all">
+            <button type="button" id="btnScanCamera" title="Escanear con cámara" class="px-4 py-2.5 bg-[var(--color-brand)]/10 text-[var(--color-brand)] border border-[var(--color-brand)]/30 hover:bg-[var(--color-brand)] hover:text-white rounded-xl transition-all flex items-center justify-center shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </button>
+          </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
             <label class="block text-xs font-bold uppercase text-[var(--text-muted)]">Precio ($) *</label>
@@ -247,6 +319,7 @@ export function renderAddProductModal({ onSave }) {
 
   const form = document.getElementById('productForm');
   const pNombre = document.getElementById('pNombre');
+  const pCodigoBarras = document.getElementById('pCodigoBarras');
   const pPrecio = document.getElementById('pPrecio');
   const pStock = document.getElementById('pStock');
   const pDescripcion = document.getElementById('pDescripcion');
@@ -256,6 +329,8 @@ export function renderAddProductModal({ onSave }) {
   const errStock = document.getElementById('errStock');
   const saveBtn = document.getElementById('btnSaveProduct');
   const fileInput = document.getElementById('pFileImage');
+  const btnScanCamera = document.getElementById('btnScanCamera');
+  
   let imageBase64Compressed = null;
   let editingId = null;
 
@@ -291,6 +366,13 @@ export function renderAddProductModal({ onSave }) {
   pPrecio.addEventListener('input', () => validateField(pPrecio, errPrecio, true));
   pStock.addEventListener('input', () => validateField(pStock, errStock, true));
 
+  btnScanCamera.onclick = () => {
+    initBarcodeScanner((scannedText) => {
+      pCodigoBarras.value = scannedText;
+      showAlert('¡Código escaneado con éxito!', 'success', 'modalAlert');
+    });
+  };
+
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -314,6 +396,7 @@ export function renderAddProductModal({ onSave }) {
 
     const productoData = {
       nombre: pNombre.value.trim(),
+      codigo_barras: pCodigoBarras.value.trim() || null,
       precio_usd: parseFloat(pPrecio.value),
       stock: parseInt(pStock.value),
       imagen_url: imageBase64Compressed || urlInput.value.trim() || null,
@@ -344,6 +427,7 @@ export function renderAddProductModal({ onSave }) {
         editingId = itemToEdit.id;
         document.getElementById('modalProductHeaderTitle').textContent = 'Editar Repuesto';
         pNombre.value = itemToEdit.nombre;
+        pCodigoBarras.value = itemToEdit.codigo_barras || '';
         pPrecio.value = itemToEdit.precio_usd;
         pStock.value = itemToEdit.stock;
         pDescripcion.value = itemToEdit.descripcion || '';
@@ -373,9 +457,6 @@ export function renderAddProductModal({ onSave }) {
   };
 }
 
-/**
- * Controla el despliegue del Drawer / Carrito Flotante para Móviles
- */
 export function setupCartDrawerEvents() {
   const cartDrawer = document.getElementById('cartDrawer');
   const mobileCartTrigger = document.getElementById('mobileCartTrigger');
@@ -398,9 +479,6 @@ export function setupCartDrawerEvents() {
   };
 }
 
-/**
- * Modal e Impresión Profesional de Recibo Digital
- */
 export function renderInvoiceModal() {
   let modalEl = document.getElementById('invoiceModal');
   if (modalEl) modalEl.remove();
@@ -522,9 +600,6 @@ export function renderInvoiceModal() {
   };
 }
 
-/**
- * Impresión aislada sin encabezados basura del navegador
- */
 function printReceiptIsolated(factura, detalles) {
   const fecha = new Date(factura.created_at).toLocaleString('es-VE');
   const tasaBCV = Number(factura.tasa_bcv) || 1;
